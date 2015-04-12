@@ -20,36 +20,30 @@ USER=$(git config user.name)
 MAIL=$(git config user.email)
 
 NAME=$APP"_"$VER"-"$NUM"_"$ARCH
-popd || exit 4
 
-mkdir -p $NAME/DEBIAN || exit 10
-pushd $NAME || exit 12
+mkdir -p $base/$NAME/DEBIAN || exit 10
+control=$base/$NAME/DEBIAN/control
 
-echo "Package: "$APP        >  DEBIAN/control
-echo "Version: "$VER"-"$NUM >> DEBIAN/control
-echo "Section: base"        >> DEBIAN/control
-echo "Priority: optional"   >> DEBIAN/control
-echo "Architecture: "$ARCH  >>  DEBIAN/control
+echo "Package: "$APP        >  $control
+echo "Version: "$VER"-"$NUM >> $control
+echo "Section: base"        >> $control
+echo "Priority: optional"   >> $control
+echo "Architecture: "$ARCH  >>  $control
 
-echo "Depends: "            >>  DEBIAN/control
-echo "Maintainer: "$USER" <"$MAIL">" >>  DEBIAN/control
+echo "Depends: "            >>  $control
+echo "Maintainer: "$USER" <"$MAIL">" >>  $control
 
-cat >> DEBIAN/control << EOF
+cat >> $control << EOF
 Description: Canonical libwebsockets.org websocket library.
   deb created for the Funtech House project.
 EOF
 
 #Misc git info...
-echo "  git describe: "$(git describe --tags)     >> DEBIAN/control
-echo "  git log: "$(git log --oneline | head -n1) >> DEBIAN/control
-
-popd || 14
-
+echo "  git describe: "$(git describe --tags)     >> $control
+echo "  git log: "$(git log --oneline | head -n1) >> $control
 
 # Second part:
 # build it and populate the DEBIAN dir
-
-pushd libwebsockets || exit 20
 
 # If exist remove build to get a clean build?
 #rm -rf libwebsockets/build/
@@ -58,7 +52,6 @@ mkdir -p build || exit 22
 cd       build || exit 24
 
 cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. || exit 26
-#cmake .. || exit 6
 make -j || exit 28
 
 make install DESTDIR=$base/$NAME/ || exit 30
