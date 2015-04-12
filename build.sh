@@ -60,11 +60,11 @@ make install DESTDIR=$base/$NAME/ || exit 30
 popd
 dpkg-deb --build $NAME || exit 40
 
-# Cleanup
-rm -rf $NAME/ || exit 50
-
 #And install it...
 sudo dpkg -i $NAME.deb || exit 60
+
+# Cleanup
+rm -rf $NAME/ || exit 50
 
 echo "Done..."
 exit 0
