@@ -39,6 +39,10 @@ Description: Canonical libwebsockets.org websocket library.
   deb created for the Funtech House project.
 EOF
 
+#Misc git info...
+echo "  git describe: "$(git describe --tags)     >> DEBIAN/control
+echo "  git log: "$(git log --oneline | head -n1) >> DEBIAN/control
+
 popd || 14
 
 
@@ -46,6 +50,9 @@ popd || 14
 # build it and populate the DEBIAN dir
 
 pushd libwebsockets || exit 20
+
+# If exist remove build to get a clean build?
+#rm -rf libwebsockets/build/
 
 mkdir -p build || exit 22
 cd       build || exit 24
